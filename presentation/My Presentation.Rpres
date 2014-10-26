@@ -1,0 +1,71 @@
+Loblolly Analytic App
+===
+author: X. SHEN
+date: `r format(Sys.Date(), format="%B %d %Y")`
+transition: rotate
+
+<br>
+<medium> <b>
+Developing Data Product <br>
+Data Science Specialization <br>
+</b> </medium>
+
+Overview
+===
+
+Loblolly Analytic App is an analytical shiny application that summarizes the Loblolly pine tree data and fits a nonlinear model for different seed sources. This App allows the users to download a plot with the fitted curve based on the selected seed source. 
+
+<center>
+![alt text](My Presentation-figure/myapp.png)
+</center>
+
+Data & Descriptive Statistics
+===
+
+<small>
+The Loblolly data frame has 84 rows and 3 columns of records of the growth of Loblolly pine trees.
+- Height: a numeric vector of tree heights (ft).
+- Age: a numeric vector of tree ages (yr).
+- Seed: an ordered factor indicating the seed source for the tree.
+
+```{r}
+summary(Loblolly)
+```
+</small>
+
+Fitted Nonlinear Model (seed=305)
+===
+
+<small>
+```{r, echo=FALSE, results=TRUE}
+
+# fit a nonlinear model
+fml <- nls(height ~ SSasymp(age, Asym, R0, lrc), data = Loblolly, 
+           subset = Seed == 305)
+
+summary(fml)
+```
+</small>
+
+Plot Fitted Nonlinear Curve (seed=305)
+===
+<center>
+```{r plot, echo=FALSE}
+library(ggplot2) 
+
+# fit a nonlinear model
+fm1 <- nls(height ~ SSasymp(age, Asym, R0, lrc),
+           data = Loblolly, subset = Seed == 305)
+
+# generate a sequence
+age <- seq(0, 30, length.out = 101)
+
+# create a plot
+plot(height ~ age, data = Loblolly, subset = Seed == 305, 
+     xlab = "Tree age (yr)", las = 1, ylab = "Tree height (ft)", 
+     bty="l", col="red", pch=19, cex = age/5,
+     main = c("Loblolly Data and Fitted Curve", 305), 
+     col.main = "forestgreen", cex.main = 1.25)
+lines(age, predict(fm1, list(age = age)), col = "blue", lty = 4, lwd = 2)                        
+```
+</center>
